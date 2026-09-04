@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Public URL, but not a search result: same posture as the artifact it replaces. -->
+<meta name="robots" content="noindex, nofollow">
+<style>
+  html { color-scheme: light dark; }
+  body { margin:0; padding:0; }
+  img { max-width:100%; }
+  /* The collapse script toggles .hidden on rows; without this the UA rule loses. */
+  [hidden]:not([hidden="until-found"]) { display:none !important; }
+</style>
+<title>The Give Band Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root {
+  --paper:#eef0f2; --surface:#ffffff; --edge:#d3d8dd;
+  --ink:#151b21; --ink-2:#4b565f; --ink-3:#77828b;
+  --accent:#0f6a63; --accent-soft:#0f6a6318;
+  --brass:#9a6b16; --brass-soft:#9a6b1618;
+  --go:#256b4f; --go-soft:#256b4f18;
+  --stop:#a33636; --stop-soft:#a3363618;
+  --idle-soft:#77828b1a;
+  --shadow:0 1px 2px #151b210d, 0 8px 24px #151b210a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:#12171c; --surface:#1a2128; --edge:#2c353e;
+    --ink:#e8edf1; --ink-2:#a3b0ba; --ink-3:#78868f;
+    --accent:#54b3a8; --accent-soft:#54b3a820;
+    --brass:#cf9c3f; --brass-soft:#cf9c3f20;
+    --go:#5fb98d; --go-soft:#5fb98d1e;
+    --stop:#e07777; --stop-soft:#e0777720;
+    --idle-soft:#78868f1f;
+    --shadow:0 1px 2px #0006, 0 10px 28px #0004;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:#12171c; --surface:#1a2128; --edge:#2c353e;
+  --ink:#e8edf1; --ink-2:#a3b0ba; --ink-3:#78868f;
+  --accent:#54b3a8; --accent-soft:#54b3a820;
+  --brass:#cf9c3f; --brass-soft:#cf9c3f20;
+  --go:#5fb98d; --go-soft:#5fb98d1e;
+  --stop:#e07777; --stop-soft:#e0777720;
+  --idle-soft:#78868f1f;
+  --shadow:0 1px 2px #0006, 0 10px 28px #0004;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.wrap { max-width:1080px; margin:0 auto; padding:40px 24px 80px; display:flex; flex-direction:column; gap:38px; }
+header { display:flex; flex-direction:column; gap:6px; }
+h1 {
+  font-family:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  font-weight:800; font-size:clamp(30px,5vw,44px); letter-spacing:-.02em;
+  margin:0; text-wrap:balance; line-height:1.05;
+}
+.sub { color:var(--ink-2); max-width:62ch; }
+.eyebrow {
+  font-family:"IBM Plex Mono", ui-monospace, monospace; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+}
+.eyebrow.private {
+  color:var(--stop); background:var(--stop-soft); align-self:flex-start;
+  padding:4px 9px; border-radius:2px; border:1px solid var(--stop);
+}
+h2 {
+  font-family:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  font-weight:600; font-size:20px; letter-spacing:-.01em; margin:0 0 2px;
+}
+section { display:flex; flex-direction:column; gap:12px; }
+.lede { color:var(--ink-2); font-size:14px; margin:0; max-width:64ch; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:10px; }
+.stat {
+  background:var(--surface); border:1px solid var(--edge); border-radius:4px;
+  padding:14px 16px; display:flex; flex-direction:column; gap:2px;
+  border-left:3px solid var(--edge);
+}
+.stat.flag-warn { border-left-color:var(--brass); }
+.stat.flag-stop { border-left-color:var(--stop); }
+.stat .n {
+  font-family:"Bricolage Grotesque", sans-serif; font-weight:800; font-size:26px;
+  font-variant-numeric:tabular-nums; line-height:1.1;
+}
+.stat .l { font-size:12px; color:var(--ink-3); }
+.scroll { overflow-x:auto; border:1px solid var(--edge); border-radius:4px; background:var(--surface); box-shadow:var(--shadow); }
+table { width:100%; border-collapse:collapse; font-size:14px; min-width:660px; }
+thead th {
+  text-align:left; font-family:"IBM Plex Mono", monospace; font-weight:500;
+  font-size:10.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-3); padding:11px 14px; border-bottom:1px solid var(--edge);
+  white-space:nowrap; background:var(--surface);
+}
+tbody td { padding:12px 14px; border-bottom:1px solid var(--edge); vertical-align:top; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr.stop { background:var(--stop-soft); }
+tbody tr.warn { background:var(--brass-soft); }
+.tier { width:1%; padding-right:0; }
+.tiercell > span {
+  display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase; padding:3px 8px; border-radius:2px;
+  white-space:nowrap;
+}
+.tier-now { background:var(--accent); color:var(--surface); font-weight:500; }
+.tier-next { background:var(--accent-soft); color:var(--accent); }
+.tier-later { color:var(--ink-3); border:1px solid var(--edge); }
+tbody tr.child td { border-top:none; }
+tbody tr.child .task { padding-left:30px; position:relative; }
+tbody tr.child .task::before {
+  content:"↳"; position:absolute; left:14px; color:var(--ink-3); font-size:13px;
+}
+tbody tr.child .num { color:var(--edge); }
+.tiercell { display:flex; flex-direction:column; align-items:center; gap:9px; }
+.caret {
+  appearance:none; border:1px solid var(--edge); border-radius:3px;
+  background:var(--paper); cursor:pointer; padding:0;
+  width:26px; height:26px; display:grid; place-items:center;
+}
+.caret .tri {
+  font-size:15px; line-height:1; color:var(--accent);
+  transition:transform .15s ease;
+}
+.caret:hover { border-color:var(--accent); background:var(--accent-soft); }
+.caret[aria-expanded="true"] .tri { transform:rotate(90deg); }
+.caret:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:2px; }
+.sr {
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+@media (prefers-reduced-motion:reduce) {
+  .caret .tri { transition:none; }
+}
+.subcount {
+  font-family:"IBM Plex Mono", monospace; font-size:10.5px; color:var(--ink-3);
+  margin-left:8px; letter-spacing:.05em; font-weight:400;
+}
+.num { font-family:"IBM Plex Mono", monospace; color:var(--ink-3); width:1%; font-variant-numeric:tabular-nums; }
+.task .t, .song .t { display:block; font-weight:500; }
+.task .note { display:block; color:var(--ink-3); font-size:12.5px; margin-top:3px; max-width:56ch; }
+.song .whose { display:block; color:var(--ink-3); font-size:12px; margin-top:2px; }
+.song .whose.cover { color:var(--brass); }
+.due { font-family:"IBM Plex Mono", monospace; font-size:12.5px; color:var(--ink-2); white-space:nowrap; }
+.ready { font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; }
+.dash { color:var(--ink-3); }
+.nobody { color:var(--stop); font-weight:600; }
+.pill {
+  display:inline-block; padding:2px 9px; border-radius:2px; font-size:11.5px;
+  font-weight:500; white-space:nowrap; border:1px solid transparent;
+}
+.pill.idle { background:var(--idle-soft); color:var(--ink-2); }
+.pill.go { background:var(--go-soft); color:var(--go); }
+.pill.warn { background:var(--brass-soft); color:var(--brass); }
+.pill.stop { background:var(--stop-soft); color:var(--stop); }
+.pill.done { background:var(--accent-soft); color:var(--accent); }
+.dep {
+  display:inline-block; font-size:12px; color:var(--brass);
+  background:var(--brass-soft); border-radius:2px; padding:2px 8px;
+}
+.dates { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+.dates li {
+  display:grid; grid-template-columns:120px 1fr auto; gap:16px; align-items:baseline;
+  padding:13px 16px; background:var(--surface);
+  border:1px solid var(--edge); border-top:none;
+}
+.dates li:first-child { border-top:1px solid var(--edge); border-radius:4px 4px 0 0; }
+.dates li:last-child { border-radius:0 0 4px 4px; }
+.dates .d { font-family:"IBM Plex Mono", monospace; font-size:13px; color:var(--ink); white-space:nowrap; }
+.dates li.firm .d { color:var(--accent); font-weight:500; }
+.dates .w { color:var(--ink-2); }
+.dates .away { font-size:12px; color:var(--ink-3); white-space:nowrap; }
+a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+footer {
+  color:var(--ink-3); font-size:12.5px; border-top:1px solid var(--edge);
+  padding-top:16px; display:flex; flex-wrap:wrap; gap:6px 18px;
+}
+footer code { font-family:"IBM Plex Mono", monospace; color:var(--ink-2); }
+@media (max-width:640px) {
+  .dates li { grid-template-columns:1fr; gap:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow ">The Give · band tracker · shared</span>
+    <h1>What's open, what's the set</h1>
+    <p class="sub">Everything the band owes itself, the songs we play, and the dates we are working toward. A snapshot of the tracker, not a live view — check the date at the bottom.</p>
+  </header>
+
+  <section>
+    <div class="stats"><div class="stat"><span class="n">24</span><span class="l">items open</span></div><div class="stat flag-warn"><span class="n">1</span><span class="l">waiting on something else</span></div><div class="stat"><span class="n">0</span><span class="l">with no owner</span></div><div class="stat"><span class="n">18</span><span class="l">songs in the set</span></div><div class="stat flag-warn"><span class="n">10/18</span><span class="l">charted</span></div><div class="stat flag-warn"><span class="n">18</span><span class="l">unscored</span></div></div>
+  </section>
+
+  <section>
+    <h2>Action items</h2>
+    <p class="lede">Ordered by what unblocks the most, then importance, then urgency — not
+    by number. Items with subtasks start collapsed — click the triangle under the priority tag to
+    open one, and it stays that way on your next visit. An item that is <em>waiting on</em> something can't start yet; <em>blocked</em>
+    means a problem outside this list; <em>proposed</em> means the Slack scan suggested it and
+    nobody has said yes.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th></th><th>#</th><th>Task</th><th>Owner</th><th>Status</th><th>Due</th><th>Waiting on</th></tr></thead>
+        <tbody>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-now">Now</span><button class="caret" type="button" aria-expanded="false" data-group="17"><span class="tri" aria-hidden="true">▶</span><span class="sr">Show the 3 subtasks of Find a drummer</span></button></div></td><td class="num">17</td><td class="task"><span class="t">Find a drummer<span class="subcount">2 of 3 open</span></span></td><td>All members</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="go child" data-parent="17" hidden><td class="tier"></td><td class="num">19</td><td class="task"><span class="t">Follow up with a BandMix candidate about the Sep 16 rehearsal</span></td><td>David G</td><td><span class="pill go">In progress</span></td><td class="due">2026-09-04</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="go child" data-parent="17" hidden><td class="tier"></td><td class="num">25</td><td class="task"><span class="t">Get Jonnie Feliciano confirmed for the Sep 16 rehearsal</span><span class="note">Drummer is Jonnie Feliciano. Jon Saxon 2026-09-03, via iMessage relayed by David: &quot;We have correspondence in with 1 drummer currently - Jonnie Feliciano. Who is currently considering joining our 9/16 practice TBD - JS and JSbass are in touch with him.&quot; So he is considering, not confirmed, and Jon Saxon and John Shyloski are the two in contact. Contact itself was resolved in item 8 after Marc got through to him. Sender identified: JSbass is John Shyloski, so &quot;JS and JSbass&quot; is Jon Saxon plus John Shyloski.</span></td><td>All members</td><td><span class="pill go">In progress</span></td><td class="due">2026-09-16</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="done child" data-parent="17" hidden><td class="tier"></td><td class="num">8</td><td class="task"><span class="t">Follow up on a drummer lead through a contact</span></td><td>John Shyloski</td><td><span class="pill done">Done</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-now">Now</span></div></td><td class="num">4</td><td class="task"><span class="t">Move shared band account logins into a password manager</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">ASAP</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="go"><td class="tier"><div class="tiercell"><span class="tier-now">Now</span><button class="caret" type="button" aria-expanded="false" data-group="20"><span class="tri" aria-hidden="true">▶</span><span class="sr">Show the 5 subtasks of Activate the band&#x27;s social media</span></button></div></td><td class="num">20</td><td class="task"><span class="t">Activate the band&#x27;s social media<span class="subcount">4 of 5 open</span></span><span class="note">Everyone follows the Instagram account and nobody has posted to it, which is the actual problem: an empty account is worse than no account when someone goes looking for the band. Phase 1 of the plan calls this foundation work, alongside the drummer and the mailing list.</span></td><td>All members</td><td><span class="pill go">In progress</span></td><td class="due">ASAP</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="20" hidden><td class="tier"></td><td class="num">22</td><td class="task"><span class="t">Draft the first posts</span><span class="note">The plan names the first one: a post from members&#x27; personal accounts asking who remembers The Give and what their favourite song or memory is. It is not just a nice idea — it is the compliant way to seed the mailing list, because people self-identify and then have a reason to hand over an address. The 2007 contact list cannot simply be imported.</span></td><td>All members</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="done child" data-parent="20" hidden><td class="tier"></td><td class="num">3</td><td class="task"><span class="t">Follow the band Instagram (@thegivebandct)</span><span class="note">Done — all four members follow the account as of 2026-09-02. Following was the whole of the original ask; the account still has no posts, which is what the rest of item 20 covers.</span></td><td>All members</td><td><span class="pill done">Done</span></td><td class="due">ASAP</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="20" hidden><td class="tier"></td><td class="num">21</td><td class="task"><span class="t">Decide a posting cadence</span><span class="note">A rhythm the band can actually hold — the plan&#x27;s whole argument is that a repeatable small thing beats a burst. Pick something four busy people sustain through the winter, not something that looks good in September.</span></td><td>All members</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="20" hidden><td class="tier"></td><td class="num">23</td><td class="task"><span class="t">Decide which other platforms to be on</span><span class="note">Three free claims the plan already calls for: Spotify for Artists, Apple Music for Artists, and the YouTube Official Artist Channel — they unlock listener counts and geography for the 2026 releases. Facebook matters separately because the 2007 audience is likely still there. Being present is not the same as posting; decide which of these the band will actually feed.</span></td><td>All members</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="20" hidden><td class="tier"></td><td class="num">24</td><td class="task"><span class="t">Set up a way to see what is working</span><span class="note">Instagram only reports on the band&#x27;s own account — its API exposes your own audience and the people who engage with your own posts, not the wider graph. So this is about the band&#x27;s own numbers plus what a person can see by looking. Do not build for metrics the platform will not give.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-next">Next</span></div></td><td class="num">2</td><td class="task"><span class="t">Lock in a January gig date</span><span class="note">The plan targets Jan/Feb 2027 at Factory Underground and venues book months out, so this is the item where a missing date has real consequences. See milestones.yaml.</span></td><td>Jon Saxon</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dep">#17 Find a drummer</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-next">Next</span></div></td><td class="num">7</td><td class="task"><span class="t">Assemble band media / promo assets</span><span class="note">Message was cut off in the screenshot. Confirm the actual ask before working this.</span></td><td>Sarah Peterson</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-next">Next</span><button class="caret" type="button" aria-expanded="false" data-group="18"><span class="tri" aria-hidden="true">▶</span><span class="sr">Show the 8 subtasks of Chart the set in the notation app</span></button></div></td><td class="num">18</td><td class="task"><span class="t">Chart the set in the notation app<span class="subcount">8 of 8 open</span></span><span class="note">Umbrella for the songs in the set with no chart in the notation app. Each song is its own subtask so it can be closed independently; this line exists so eight rows do not dominate the list. The count comes from the app&#x27;s own song bank — run bin/sync_notation.py and the finished ones fall away.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">9</td><td class="task"><span class="t">Chart Damnation in the notation app</span><span class="note">A Give original, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">10</td><td class="task"><span class="t">Chart If I Didn&#x27;t Know Any Better in the notation app</span><span class="note">Cover, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">11</td><td class="task"><span class="t">Chart Lebanon in the notation app</span><span class="note">A Give original, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">12</td><td class="task"><span class="t">Chart Never Alone in the notation app</span><span class="note">Cover, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">13</td><td class="task"><span class="t">Chart Not Just Yet in the notation app</span><span class="note">A Give original, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">14</td><td class="task"><span class="t">Chart Scarlett O&#x27;Hara in the notation app</span><span class="note">A Give original, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">15</td><td class="task"><span class="t">Chart Seven Years in the notation app</span><span class="note">A Give original, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle child" data-parent="18" hidden><td class="tier"></td><td class="num">16</td><td class="task"><span class="t">Chart When You&#x27;re My Age in the notation app</span><span class="note">Cover, in the set and rehearsed, but absent from the notation app song bank as of 2026-09-02. Close this when the chart exists; bin/sync_notation.py will flip in_notation on its own.</span></td><td>David G</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-next">Next</span></div></td><td class="num">26</td><td class="task"><span class="t">Write a one-paragraph band blurb for Marc&#x27;s YouTube channel</span><span class="note">Reported in iMessage, not Slack — captured by hand. Originally asked of &quot;Sarah or Don&quot;; Don declined the pass on 2026-09-03, relayed by David: &quot;i think sarah would be the best go to person for the paragraph for you tube channel or john saxon&quot;. Owner set to Sarah on that steer — she has not confirmed it herself, and Jon Saxon is the named alternate. David asked for a first draft on 2026-09-03, so this may land as Sarah editing a draft rather than writing from scratch.</span></td><td>Sarah Peterson</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-next">Next</span></div></td><td class="num">27</td><td class="task"><span class="t">Create YouTube banner artwork for Marc&#x27;s channel</span><span class="note">Reported in iMessage, not Slack — captured by hand. Marc, who helped reach the drummer (see items 8 and 25), is building a YouTube channel and wants a banner plus the blurb in item 26.</span></td><td>John Shyloski</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-later">Later</span></div></td><td class="num">1</td><td class="task"><span class="t">Share new photos shot for female artists with the group</span><span class="note">Paraphrased in the original tracker — the verbatim line was not captured before iMessage was abandoned.</span></td><td>John Shyloski</td><td><span class="pill idle">Not started</span></td><td class="due">after edits complete</td><td class="wait"><span class="dash">—</span></td></tr>
+<tr class="idle"><td class="tier"><div class="tiercell"><span class="tier-later">Later</span></div></td><td class="num">6</td><td class="task"><span class="t">Refresh johnshyloskiphotography.com</span><span class="note">Stated as a gap, not committed to as a task.</span></td><td>John Shyloski</td><td><span class="pill idle">Not started</span></td><td class="due">TBD</td><td class="wait"><span class="dash">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dates</h2>
+    <ul class="dates">
+<li class="firm"><span class="d">16 Sep 2026</span><span class="w">Rehearsal in Weston, CT</span><span class="away">13 days away</span></li>
+<li class="target"><span class="d">15 Dec 2026</span><span class="w">Record the current lineup — 2-3 songs, well shot. Gated on having a drummer.</span><span class="away">in 3 months · target</span></li>
+<li class="target"><span class="d">31 Jan 2027</span><span class="w">First show, Factory Underground. Rung one.</span><span class="away">in 5 months · target</span></li>
+<li class="target"><span class="d">1 May 2027</span><span class="w">Westfest — possible next rung</span><span class="away">in 8 months · target</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The set · 18 songs</h2>
+    <p class="lede">All rehearsed. Readiness runs 1 (not ready) to 5 (polished);
+    <code>?</code> means nobody has scored it yet.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Song</th><th>Charted</th><th>Rehearsed</th><th>Ready</th></tr></thead>
+        <tbody>
+<tr><td class="song"><span class="t">Anywhere</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Damnation</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Feeling the Fall</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Foggy Night</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Hurricane Larry</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">If I Didn&#x27;t Know Any Better</span><span class="whose cover">Alison Krauss &amp; Union Station</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Lebanon</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Look What I&#x27;ve Made</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Never Alone</span><span class="whose cover">Jesse Bonanno</span></td><td><span class="pill stop">no</span></td><td><span class="pill idle">?</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Not Just Yet</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Scarlett O&#x27;Hara</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Seven Years</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Star to Star</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">The Only</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Twig</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">When You&#x27;re My Age</span><span class="whose cover">Lori McKenna</span></td><td><span class="pill stop">no</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">Yes, But</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+<tr><td class="song"><span class="t">You&#x27;re All Mine</span></td><td><span class="pill go">yes</span></td><td><span class="pill go">yes</span></td><td class="ready"><span class="dash">?</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+  (function () {
+    var KEY = "thegive-open-groups";
+    var open = new Set();
+    try { open = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) {}
+
+    function apply(id, isOpen) {
+      document.querySelectorAll('tr[data-parent="' + id + '"]')
+        .forEach(function (row) { row.hidden = !isOpen; });
+      var btn = document.querySelector('.caret[data-group="' + id + '"]');
+      if (btn) {
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        var label = btn.querySelector(".sr");
+        if (label) {
+          label.textContent = label.textContent.replace(
+            /^(Show|Hide)/, isOpen ? "Hide" : "Show");
+        }
+      }
+    }
+
+    document.querySelectorAll(".caret").forEach(function (btn) {
+      var id = btn.dataset.group;
+      apply(id, open.has(id));
+      btn.addEventListener("click", function () {
+        var isOpen = btn.getAttribute("aria-expanded") !== "true";
+        if (isOpen) { open.add(id); } else { open.delete(id); }
+        apply(id, isOpen);
+        try { localStorage.setItem(KEY, JSON.stringify([].concat(Array.from(open)))); }
+        catch (e) {}
+      });
+    });
+  })();
+  </script>
+
+  <footer><span>Last updated 3 September 2026.</span></footer>
+</div>
+</body>
+</html>
